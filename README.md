@@ -6,3 +6,7 @@ currently only account registration and login is available, with basic informati
 
 # Any contribution will be appriciated
 
+![plot](registration.jpg)
+![plot](dashboard.jpg)
+![plot](services.jpg)
+
