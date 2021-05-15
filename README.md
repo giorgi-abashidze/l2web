@@ -4,7 +4,7 @@ currently only account registration and login is available, with basic informati
 
 # TODO List
 
-- [ ] Save Dashboard data locally and update after x minutes to prevent l2word receiving too many requests
+- [ ] Save Dashboard data locally and update after x minutes to prevent l2word from receiving too many requests
 - [ ] Implement Payment With Visa / Mastercard
 
 
