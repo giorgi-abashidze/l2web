@@ -2,6 +2,10 @@
 
 currently only account registration and login is available, with basic information on user dashbooard like: account info, epic owners list, topclans and more.
 
+# TODO List
+
+- [ ] Save data locally and update after x minutes to prevent l2word receiving too many requests
+- [ ] Implement Payment With Visa / Mastercard
 
 
 # Any contribution will be appriciated
