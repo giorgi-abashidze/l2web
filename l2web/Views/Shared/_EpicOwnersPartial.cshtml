@@ -1,0 +1,23 @@
+﻿@model List<l2web.Models.EpicJewelOwner>
+
+         
+        <table class="table table-dark text-light table-borderless">
+            <thead class="border-bottom border-secondary">
+                <tr>
+                    <th class="h6" scope="col">Char Name</th>
+                    <!-- <th class="h6" scope="col">Item Name</th> -->
+                    <th class="h6" scope="col">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td class="text-info">@item.CharName</td>
+                    <!-- <td>item.GetItemName()</td> -->
+                    <td>@item.Amount</td>
+                </tr>
+                }
+            </tbody>
+
+        </table>

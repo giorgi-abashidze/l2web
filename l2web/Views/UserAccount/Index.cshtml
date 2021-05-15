@@ -1,0 +1,403 @@
+﻿
+@model l2web.Views.UserAccount.IndexModel
+
+<div class="container text-light">
+    <div class="row">
+        <div class="col mt-2" style="min-width:260px;">
+            <i class="fas fa-globe-asia h5 text-success"></i>
+            <span class="h5 text-light ml-1">@Model.OnlinePlayers</span>
+        </div>
+        <div class="col mt-2">
+            <i class="fas fa-coins h5 text-warning"></i>
+            <span class="h5 text-light ml-1">0</span>
+            <div class="btn-group ml-2" style="margin-top:-6px;">
+                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Manage Balance
+                </button>
+                <div class="dropdown-menu bg-secondary">
+                    <a class="dropdown-item text-light" href="#" data-toggle="modal" data-target="#paymentModal">Buy Coins</a>
+                    <a class="dropdown-item text-light" href="#">Send Coins To Game Character</a>
+                    <a class="dropdown-item text-light" asp-area="" asp-controller="UserAccount" asp-action="Services">Other Services</a>
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col mt-2">
+            <p class="h5">Your characters</p>
+            <div class="card bg-dark mt-3 p-2 shadow-lg" style="min-width:300px;">
+                <table class="table table-borderless table-dark">
+                    <thead class="border-bottom border-secondary">
+                        <tr>
+                            <th class="h6" scope="col">Name</th>
+                            <th class="h6" scope="col">Class</th>
+                            <th class="h6" scope="col">Race</th>
+                            <th class="h6" scope="col">Level</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ch in Model.Characters)
+                        {
+
+                            <tr>
+                                <td class="text-info">@ch.Name</td>
+                                <td>@ch.GetClassName()</td>
+                                <td>@ch.GetRaceName()</td>
+                                <td>@ch.Lvl</td>
+                            </tr>
+
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+        <div class="col mt-2">
+            <p class="h5">Epics on server</p>
+            <div class="container card bg-dark shadow-lg mt-3 pb-2">
+                <div class="flex-row mt-2 d-flex justify-content-center">
+
+                    <div class="col-sm  text-center hv pt-3 popup" data-id="6657" data-url="UserAccountController/Epic" data-toggle="modal" data-target="#epicsModal">
+
+                        <img src="~/images/epics/Item_6657.jpg" />
+                        @if (Model.getValakasNecklaceCount() > 0)
+                        {
+                            <p class="text-center"><small>Valakas's Necklace <span class="badge badge-danger">@Model.getValakasNecklaceCount()</span></small></p>
+                        }
+                        else
+                        {
+                            <p class="text-center"><small>Valakas's Necklace <span class="badge badge-light">@Model.getValakasNecklaceCount()</span></small></p>
+                        }
+
+                    </div>
+
+
+                    <div class="col-sm text-center hv pt-3 popup" data-id="6658" data-url="UserAccountController/Epic" data-toggle="modal" data-target="#epicsModal">
+                        <img src="~/images/epics/Item_6658.jpg" />
+                        @if (Model.getBaiumRingCount() > 0)
+                        {
+                            <p class="text-center"><small>Ring of Baium <span class="badge badge-danger">@Model.getBaiumRingCount()</span></small></p>
+                        }
+                        else
+                        {
+                            <p class="text-center"><small>Ring of Baium <span class="badge badge-light">@Model.getBaiumRingCount()</span></small></p>
+                        }
+                    </div>
+
+
+                    <div class="col-sm text-center hv pt-3 popup" data-id="6659" data-url="UserAccountController/Epic" data-toggle="modal" data-target="#epicsModal">
+
+                        <img src="~/images/epics/Item_6659.jpg" />
+                        @if (Model.getZakenEarringCount() > 0)
+                        {
+                            <p class="text-center"><small>Zaken's Earring <span class="badge badge-danger">@Model.getZakenEarringCount()</span></small></p>
+                        }
+                        else
+                        {
+                            <p class="text-center"><small>Zaken's Earring <span class="badge badge-light">@Model.getZakenEarringCount()</span></small></p>
+                        }
+
+
+                    </div>
+
+                </div>
+                <hr />
+                <div class="flex-row mt-2 d-flex justify-content-center">
+
+                    <div class="col-sm text-center hv pt-3 popup" data-id="6660" data-url="UserAccountController/Epic" data-toggle="modal" data-target="#epicsModal">
+
+                        <img src="~/images/epics/Item_6660.jpg" />
+                        @if (Model.getQARingCount() > 0)
+                        {
+                            <p class="text-center"><small>Ring of Queen Ant <span class="badge badge-danger">@Model.getQARingCount()</span></small></p>
+                        }
+                        else
+                        {
+                            <p class="text-center"><small>Ring of Queen Ant <span class="badge badge-light">@Model.getQARingCount()</span></small></p>
+                        }
+
+                    </div>
+
+
+                    <div class="col-sm text-center hv pt-3 popup" data-id="8191" data-url="UserAccountController/Epic" data-toggle="modal" data-target="#epicsModal">
+
+                        <img src="~/images/epics/Item_8191.jpg" />
+                        @if (Model.getFrintezzaNecklaceCount() > 0)
+                        {
+                            <p class="text-center"><small>Frintezza's Necklace <span class="badge badge-danger">@Model.getFrintezzaNecklaceCount()</span></small></p>
+                        }
+                        else
+                        {
+                            <p class="text-center"><small>Frintezza's Necklace <span class="badge badge-light">@Model.getFrintezzaNecklaceCount()</span></small></p>
+                        }
+
+                    </div>
+
+
+                    <div class="col-sm text-center hv pt-3 popup" data-id="90992" data-url="UserAccountController/Epic" data-toggle="modal" data-target="#epicsModal">
+
+                        <img src="~/images/epics/Item_90992.jpg" />
+                        @if (Model.getAntarasEarringCount() > 0)
+                        {
+                            <p class="text-center"><small>Antharas' Earring <span class="badge badge-danger">@Model.getValakasNecklaceCount()</span></small></p>
+                        }
+                        else
+                        {
+                            <p class="text-center"><small>Antharas' Earring <span class="badge badge-light">@Model.getValakasNecklaceCount()</span></small></p>
+                        }
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col mt-2">
+            <p class="h5">Top Clans</p>
+            <div class="card  bg-dark mt-3 p-2 shadow-lg">
+                <table class="table table-dark table-borderless">
+                    <thead class="border-bottom border-secondary">
+                        <tr>
+                            <th class="h6" scope="col">Name</th>
+                            <th class="h6" scope="col">Level</th>
+                            <th class="h6" scope="col">Leader</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var clan in Model.TopClans)
+                        {
+
+                            <tr>
+                                <td class="text-info"> @clan.ClanName</td>
+                                <td>@clan.ClanLevel</td>
+                                <td>@clan.LeaderName</td>
+                            </tr>
+
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+
+        </div>
+        <div class="col mt-2">
+            <p class="h5">Castles</p>
+            <div class="card bg-dark mt-3 p-2 shadow-lg">
+                <table class="table table-dark table-borderless">
+                    <thead class="border-bottom border-secondary">
+                        <tr>
+                            <th class="h6" scope="col">Castle Name</th>
+                            <th class="h6" scope="col">Owner Clan</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var castle in Model.CastleInfo)
+                        {
+
+                            <tr>
+                                <td class="text-info"> @castle.getNormalizedCastleName()</td>
+                                <td>@castle.Owner</td>
+
+                            </tr>
+
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!--Epics Modal -->
+<div class="modal fade" id="epicsModal" tabindex="-1" role="dialog" aria-labelledby="epicsModalLabel" aria-hidden="true">
+    <div class="modal-dialog text-light border-dark" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header bg-dark border-secondary">
+                <span class="h5" id="epicsModalTitle"></span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body bg-dark border-secondary text-light">
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog text-light border-dark" role="document">
+        <div class="modal-content bg-dark">
+            <div class="modal-header bg-dark border-secondary">
+                <span class="h5" id="paymentModalTitle">Buy Coins</span>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+                <div class="modal-body bg-dark border-secondary text-light">
+
+                    <div class="form-group">
+                        <p for="coinsRange" class="form-label text-center"><i class="fas fa-coins h5 text-warning"></i>&nbsp;<span id="coinsRangeValue" class="h5 text-warning">1  &nbsp;&nbsp;&nbsp;&nbsp; Price:  0.5$</span>  </p>
+                        <input type="range" value="1" oninput="coinsQuantityChanged(this.value)" onchange="coinsQuantityChanged(this.value)" class="form-range w-100 bg-warning" id="coinsRange" step="1" min="1" max="100">
+                    </div>
+
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#paymentModal"> Cancel </button>
+                    <button type="button" class="btn btn-primary" onclick="redirectPaypal()"> Buy </button>
+                </div>
+       
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function coinsQuantityChanged(value) {
+        $('#coinsRangeValue').html(value +" &nbsp;&nbsp;&nbsp;&nbsp; Price: "+value*0.5+"$");
+    }
+
+    function redirectPaypal(reff) {
+        var value = $('#coinsRange').val();
+        var url = "UserAccountController/Buy/"+value;
+        console.log(value);
+
+        $.post(url);
+    }
+
+    document.getElementById("account-home").classList.remove("customNotSelected");
+    document.getElementById("account-home").classList.add("customSelected");
+
+    document.getElementById("account-services").classList.remove("customSelected");
+    document.getElementById("account-services").classList.add("customNotSelected");
+
+    document.getElementById("account-settings").classList.remove("customSelected");
+    document.getElementById("account-settings").classList.add("customNotSelected");
+
+    (function ($) {
+        function Index() {
+            var $this = this;
+            function initialize() {
+
+
+
+                $(".popup").on('click', function (e) {
+                    var id = parseInt($(this).data('id'));
+                    switch (id) {
+                        case 6658:
+                            epicBaiumPopup(this);
+                            break;
+                        case 6657:
+                            epicValakasPopup(this);
+                            break;
+                        case 6659:
+                            epicZakenPopup(this);
+                            break;
+                        case 6660:
+                            epicQAPopup(this);
+                            break;
+                        case 8191:
+                            epicFrintezzaPopup(this);
+                            break;
+                        case 90992:
+                            epicAntarasPopup(this);
+                            break;
+                    }
+
+                });
+
+                function epicBaiumPopup(reff) {
+                    var url = $(reff).data('url')+"/"+'@Json.Serialize(Model.EpicOwners.Where(o => o.ItemId == 6658))';
+
+                    $.get(url).done(function (data) {
+                        $('#epicsModalTitle').html("Baium Owners");
+                        $('#epicsModal').find(".modal-body").html(data);
+                        $('#epicsModal > .modal', data).modal('show');
+                    });
+
+                }
+
+                function epicValakasPopup(reff) {
+                    var url = $(reff).data('url')+"/"+'@Json.Serialize(Model.EpicOwners.Where(o => o.ItemId == 6657))';
+
+                    $.get(url).done(function (data) {
+                        $('#epicsModalTitle').html("Valakas Owners");
+                        $('#epicsModal').find(".modal-body").html(data);
+                        $('#epicsModal > .modal', data).modal('show');
+                    });
+
+                }
+
+                function epicZakenPopup(reff) {
+                    var url = $(reff).data('url')+"/"+'@Json.Serialize(Model.EpicOwners.Where(o => o.ItemId == 6659))';
+
+                    $.get(url).done(function (data) {
+                        $('#epicsModalTitle').html("Zaken Owners");
+                        $('#epicsModal').find(".modal-body").html(data);
+                        $('#epicsModal > .modal', data).modal('show');
+                    });
+
+                }
+
+                function epicQAPopup(reff) {
+                    var url = $(reff).data('url')+"/"+'@Json.Serialize(Model.EpicOwners.Where(o => o.ItemId == 6660))';
+
+                    $.get(url).done(function (data) {
+                        $('#epicsModalTitle').html("Ant Queen Owners");
+                        $('#epicsModal').find(".modal-body").html(data);
+                        $('#epicsModal > .modal', data).modal('show');
+                    });
+
+                }
+
+                function epicFrintezzaPopup(reff) {
+                    var url = $(reff).data('url')+"/"+'@Json.Serialize(Model.EpicOwners.Where(o => o.ItemId == 8191))';
+
+                    $.get(url).done(function (data) {
+                        $('#epicsModalTitle').html("Frintezza Owners");
+                        $('#epicsModal').find(".modal-body").html(data);
+                        $('#epicsModal > .modal', data).modal('show');
+                    });
+
+                }
+
+                function epicAntarasPopup(reff) {
+                    var url = $(reff).data('url')+"/"+'@Json.Serialize(Model.EpicOwners.Where(o => o.ItemId == 90992))';
+
+                    $.get(url).done(function (data) {
+                        $('#epicsModalTitle').html("Antaras Owners");
+                        $('#epicsModal').find(".modal-body").html(data);
+                        $('#epicsModal > .modal', data).modal('show');
+                    });
+
+                }
+            }
+
+            $this.init = function () {
+                initialize();
+            };
+        }
+        $(function () {
+            var self = new Index();
+            self.init();
+        });
+    }(jQuery));
+</script>
+
+

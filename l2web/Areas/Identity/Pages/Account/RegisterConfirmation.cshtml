@@ -1,0 +1,54 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Register confirmation";
+}
+<a style="display:none" id="linker" href="data:application/octet-stream;charset=utf-8;text/plain,@Model.FileData" download="@Model.Login .txt"></a>
+<h1>@ViewData["Title"]</h1>
+@{
+    if (@Model.DisplayConfirmAccountLink)
+    {
+        <p>
+            This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
+            Normally this would be emailed: <a id="confirm-link" href="@Model.EmailConfirmationUrl">Click here to confirm your account</a>
+        </p>
+    }
+    else
+    {
+
+        if (@Model.Resend == false)
+        {
+            <form id="account" method="post">
+                <input asp-for="Input.Email" value="@Model.Email" style="visibility:collapse;" />
+                <p>
+                    Please check your email @Model.Email to confirm your account.
+                </p>
+                <br />
+
+
+                <button type="submit" class="btn btn-primary">Resend</button>
+            </form>
+        }
+        else
+        {
+            <p>
+                Confirmation email resent to @Model.Email
+            </p>
+        }
+    }
+
+    if (@Model.Login != null && @Model.Login != String.Empty)
+    {
+        <script>
+            document.getElementById("linker").click();
+        </script>
+    }
+}
+
+
+
+
+
+
+
+

@@ -1,0 +1,66 @@
+﻿
+@model l2web.Views.UserAccount.UserServicesModel
+
+<div class="container text-light">
+    <div class="row">
+        <div class="col mt-2" style="min-width:260px;">
+            <i class="fas fa-globe-asia h5 text-success"></i>
+            <span class="h5 text-light ml-1">@Model.OnlinePlayers</span>
+        </div>
+        <div class="col mt-2">
+            <i class="fas fa-coins h5 text-warning"></i>
+            <span class="h5 text-light ml-1">0</span>
+            <div class="btn-group ml-2" style="margin-top:-6px;">
+                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Manage Balance
+                </button>
+                <div class="dropdown-menu bg-secondary">
+                    <a class="dropdown-item text-light" href="#">Buy Coins</a>
+                    <a class="dropdown-item text-light" href="#">Send Coins To Game Character</a>
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <div class="card bg-dark shadow-lg text-center pt-2 hv">
+                <p class="h-6">Premium 24 Hour</p>
+                <i class="fas fa-crown"></i>
+                <p class="text-warning"> 2 Coin</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-dark shadow-lg text-center pt-2 hv">
+                <p class="h-6">Premium 1 Week</p>
+                <i class="fas fa-crown"></i>
+                <p class="text-warning">10 Coin</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card bg-dark shadow-lg text-center pt-2 hv">
+                <p class="h-6">Premium 1 Month</p>
+                <i class="fas fa-crown"></i>
+                <p class="text-warning">20 Coin</p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script>
+    document.getElementById("account-home").classList.remove("customSelected");
+    document.getElementById("account-home").classList.add("customNotSelected");
+
+    document.getElementById("account-services").classList.remove("customNotSelected");
+    document.getElementById("account-services").classList.add("customSelected");
+
+    document.getElementById("account-settings").classList.remove("customSelected");
+    document.getElementById("account-settings").classList.add("customNotSelected");
+</script>
+

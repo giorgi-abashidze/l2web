@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "type": "mssql.local",
+      "connectionId": "DefaultConnection"
+    },
+    "secrets1": {
+      "type": "secrets.user"
+    },
+    "mssql2": {
+      "type": "mssql.onprem",
+      "connectionId": "L2Connection",
+      "secretStore": "LocalSecretsFile"
+    },
+    "mssql3": {
+      "type": "mssql.onprem",
+      "connectionId": "L2WorldConnection",
+      "secretStore": "LocalSecretsFile"
+    }
+  }
+}
