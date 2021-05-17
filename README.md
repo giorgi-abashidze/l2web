@@ -2,7 +2,7 @@
 
 currently only account registration and login is available, with basic information on user dashbooard like: account info, epic owners list, topclans and more.
 
-# Important
+# Important !
 see appsettings.json to configure project
 
 # TODO List
