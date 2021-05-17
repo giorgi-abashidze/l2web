@@ -2,6 +2,9 @@
 
 currently only account registration and login is available, with basic information on user dashbooard like: account info, epic owners list, topclans and more.
 
+# Important
+see appsettings.json to configure project
+
 # TODO List
 
 - [x] Save Dashboard data locally and update after x minutes to prevent l2word from receiving too many requests
