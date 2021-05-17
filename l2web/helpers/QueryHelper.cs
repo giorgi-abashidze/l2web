@@ -1,9 +1,11 @@
-﻿using l2web.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using l2web.Data;
+using l2web.Data.DataModels;
+using l2web.helpers.contracts;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,32 +14,20 @@ namespace l2web.helpers
 {
 
 
-    public interface IQueryHelper {
-        Task<bool> CheckAccount(string login);
-        Task<bool> CheckEmail(string email);
-        Task<int> GetAccountsCount();
-        Task<bool> InsertSSN(string ssn, string name, string email, string phone = null);
-        Task<bool> InsertUserAccount(string account, string email);
-        Task<bool> InsertUserAuth(string account, string password, string md5password = null, string quiz1 = null, string quiz2 = null, string answer1 = null, string answer2 = null);
-        Task<bool> InsertUserInfo(string account, string ssn);
-        Task<bool> UpdatePay(string account);
-        Task<List<Character>> GetCharactersInfo(string account);
-        Task<int> GetOnlineCount();
-        Task<List<EpicJewelOwner>> GetEpicOwners();
-        Task<List<Clan>> GetTopClans();
-        Task<List<Castle>> GetCastleInfo();
-    }
     public class QueryHelper : IQueryHelper
     {
 
         private readonly IConfiguration Configuration;
+        private readonly UserManager<ApplicationUser> _userManager;
         string connectionStr;
         string worldConnectionStr;
-    
+        private readonly ApplicationDbContext _db;
 
-        public QueryHelper(IConfiguration configuration)
+        public QueryHelper(IConfiguration configuration, ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             Configuration = configuration;
+            _db = db;
+            _userManager = userManager;
             connectionStr = Configuration.GetConnectionString("L2Connection");
             worldConnectionStr = Configuration.GetConnectionString("L2WorldConnection");
             
@@ -69,18 +59,6 @@ namespace l2web.helpers
             }
         }
 
-        public async Task<int> GetAccountsCount()
-        {
-            string query = "SELECT count(*) FROM user_account";
-
-            using (SqlConnection connection = new SqlConnection(
-               connectionStr))
-            {
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Connection.Open();
-                return (int)await command.ExecuteScalarAsync();
-            }
-        }
 
         public async Task<bool> InsertSSN(string ssn,string name,string email,string phone = null)
         {
@@ -167,11 +145,11 @@ namespace l2web.helpers
             }
         }
 
-        public async Task<List<Character>> GetCharactersInfo(string account)
+        public async Task<bool> GetCharactersInfo(ApplicationUser user)
         {
-            List<Character> characters = new List<Character>();
 
-            string query = $"SELECT char_name,race,class,Lev FROM user_data WHERE account_name = '{account}'";
+
+            string query = $"SELECT char_name,race,class,Lev FROM user_data WHERE account_name = '{user.Login}'";
 
             using (SqlConnection connection = new SqlConnection(
                worldConnectionStr))
@@ -182,24 +160,46 @@ namespace l2web.helpers
                 {
                     while(reader.Read())
                     {
-                        var ch = new Character();
+                        var ch = new CharacterCache();
 
                         ch.Name = (string)reader["char_name"];
                         ch.Lvl = (byte)reader["Lev"];
                         ch.OcupationIndex = (byte)reader["class"];
                         ch.RaceIndex = (byte)reader["race"];
+                        ch.AccountId = user.Account.Id;
+                        ch.Account = user.Account;
 
-                        characters.Add(ch);
+                        var tmpChar = user.Account.Characters.Where(c => c.Name.Equals(ch.Name)).FirstOrDefault();
+
+                        if (tmpChar == null)
+                        {
+                            user.Account.Characters.Add(ch);
+                        }
+                        else
+                        {
+                            _db.Attach(tmpChar);
+
+                            tmpChar.RaceIndex = ch.RaceIndex;
+                            tmpChar.OcupationIndex = ch.OcupationIndex;
+                            tmpChar.Lvl = ch.Lvl;
+                            
+                            _db.Entry(tmpChar).Property(p => p.RaceIndex).IsModified = true;
+                            _db.Entry(tmpChar).Property(p => p.OcupationIndex).IsModified = true;
+                            _db.Entry(tmpChar).Property(p => p.Lvl).IsModified = true;
+                        }
 
                     }
+
+
                 }
             }
 
-            return characters;
-            
+            await _db.SaveChangesAsync();
+
+            return true;
         }
 
-        public async Task<int> GetOnlineCount()
+        public async Task<bool> GetOnlineCount()
         {
 
             string query = $"SELECT COUNT(*) FROM user_data where login > logout";
@@ -209,15 +209,69 @@ namespace l2web.helpers
             {
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Connection.Open();
-                return (int)await command.ExecuteScalarAsync();
+                int online = (int)await command.ExecuteScalarAsync();
+                var OCache = new OnlineCache();
+                OCache.Online = online;
+                OCache.TDate = DateTime.Now;
+
+                var count = _db.OnlineCache.Count();
+
+                if (count == 0) {
+                    //if there is no data save first record with time xx:00
+                    //we dont need records like xx:14 or xx:47
+                    //we need data like 13:00, 14:00 and so on.
+                    var now = DateTime.Now;
+                    if (now.Minute < 30 && now.Minute != 0) {
+                        now = now.AddMinutes(-now.Minute);
+                    }
+                    else if(now.Minute > 30 && now.Minute != 0)
+                    {
+                        now = now.AddMinutes(60 - now.Minute);
+                    }
+
+                    OCache.TDate = now;
+                    _db.OnlineCache.Add(OCache);
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+
+                //last record is always current online
+                //we also save online data for every one hour
+                //for accuracy, in the chart dont use last record
+
+                var last = await _db.OnlineCache.OrderByDescending(o => o.TDate).FirstAsync();
+                if (HelperFunctions.GetDiffInMinutes(last.TDate, DateTime.Now) >= 60)
+                {
+                    //just keep 100 records its about 4 day
+                    if (count >= 100) {
+                        var first = await _db.OnlineCache.OrderBy(o => o.TDate).FirstAsync();
+                        _db.Remove(first);
+                    }
+
+                    _db.Attach(last);
+                    last.Online = OCache.Online;
+                    last.TDate = last.TDate.AddHours(1);
+                    _db.Entry(last).Property(e => e.Online).IsModified = true;
+                    _db.Entry(last).Property(e => e.TDate).IsModified = true;
+
+                    _db.OnlineCache.Add(OCache);
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+                else {
+                    _db.Attach(last);
+                    last.Online = OCache.Online;
+                    _db.Entry(last).Property(e => e.Online).IsModified = true;
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+
 
             }
         }
 
-        public async Task<List<EpicJewelOwner>> GetEpicOwners()
+        public async Task<bool> GetEpicOwners()
         {
-
-            List<EpicJewelOwner> owners = new List<EpicJewelOwner>();
 
             string query = "SELECT p.char_name,p.item_type, SUM(p.amount) as amount " +
                 "FROM( "+
@@ -245,22 +299,42 @@ namespace l2web.helpers
                 {
                     while (reader.Read())
                     {
-                        var owner = new EpicJewelOwner((string)reader["char_name"], (int)reader["item_type"], (Int64)reader["amount"]);
+                        var owner = new EpicOwnersCache();
+                        owner.CharName = (string)reader["char_name"];
+                        owner.ItemId = (int)reader["item_type"];
+                        owner.Amount = (Int64)reader["amount"];
 
-                        owners.Add(owner);
+
+                        var tmpOwner = _db.EpicOwnersCache.Where(e => e.CharName.Equals(owner.CharName) && e.ItemId == owner.ItemId).FirstOrDefault();
+
+                        //if record don't exists create one
+                        if (tmpOwner == null)
+                        {
+                            _db.EpicOwnersCache.Add(owner);
+                        }
+                        //if exists record with same charname and itemId just update amount (I know Quantity would be better name :D)
+                        else
+                        {
+                            _db.Attach(tmpOwner);
+                            tmpOwner.Amount = owner.Amount;
+                            _db.Entry(tmpOwner).Property(p => p.Amount).IsModified = true;
+                        }
 
                     }
                 }
 
             }
 
-            return owners;
+            await _db.SaveChangesAsync();
+
+            return true;
         }
 
-        public async Task<List<Clan>> GetTopClans()
+        public async Task<bool> GetTopClans()
         {
-
-            List<Clan> topClans = new List<Clan>();
+            //clear Top 10 Clans Table and Insert new data instead of update
+            //Its only 10 records so it wont be big operation I think..
+            await _db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ClanCache]");
 
             string query = "SELECT TOP 10 Pledge.name as clan_name "
               + ",user_data.char_name as leader_name "
@@ -280,27 +354,30 @@ namespace l2web.helpers
                 {
                     while (reader.Read())
                     {
-                        var clan = new Clan();
+                        var clan = new ClanCache();
                         clan.ClanName = (string)reader["clan_name"];
                         clan.LeaderName = (string)reader["leader_name"];
                         clan.ClanLevel = (Int16)reader["level"];
                         clan.Icon = (byte[])reader["icon"];
-                       
 
-                        topClans.Add(clan);
+
+                        _db.ClanCache.Add(clan);
 
                     }
                 }
 
             }
 
-            return topClans;
+            await _db.SaveChangesAsync();
+
+            return true;
         }
 
-        public async Task<List<Castle>> GetCastleInfo()
+        public async Task<bool> GetCastleInfo()
         {
-
-            List<Castle> castles = new List<Castle>();
+            //clear castlecache and Insert new data Instead of update
+            //same like top clans
+            await _db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [CastleCache]");
 
             string query = "SELECT castle.name as castle, Pledge.name as owner FROM castle LEFT JOIN Pledge ON castle.pledge_id = Pledge.pledge_id";
 
@@ -313,22 +390,20 @@ namespace l2web.helpers
                 {
                     while (reader.Read())
                     {
-                        var castle = new Castle();
+                        var castle = new CastleCache();
                         castle.CastleName = (string)reader["castle"];
                         castle.Owner = Convert.IsDBNull(reader["owner"]) ? "None" : (string)reader["owner"];
 
-                        castles.Add(castle);
-
+                        _db.CastleCache.Add(castle);
                     }
                 }
 
             }
 
-            return castles;
+            await _db.SaveChangesAsync();
+
+            return true;
         }
-
-
-
 
 
     }

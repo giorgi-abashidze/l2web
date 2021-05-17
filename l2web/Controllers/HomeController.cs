@@ -1,4 +1,6 @@
-﻿using l2web.helpers;
+﻿using l2web.Data.DataModels;
+using l2web.helpers;
+using l2web.helpers.contracts;
 using l2web.Models;
 using l2web.Views.Home;
 using Microsoft.AspNetCore.Authorization;

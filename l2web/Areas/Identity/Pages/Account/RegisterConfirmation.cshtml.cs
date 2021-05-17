@@ -10,6 +10,7 @@ using System.Text.Encodings.Web;
 using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using l2web.Data.DataModels;
 
 namespace l2web.Areas.Identity.Pages.Account
 {

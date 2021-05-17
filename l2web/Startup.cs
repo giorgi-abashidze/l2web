@@ -1,26 +1,17 @@
 using l2web.Data;
-using l2web.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SendGrid;
 using l2web.helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Edi.Captcha;
 using l2web.helpers.contracts;
+using l2web.Data.DataModels;
 
 namespace l2web
 {
@@ -76,8 +67,9 @@ namespace l2web
             services.AddSessionBasedCaptcha();
 
             services.AddSingleton<IEmailSender, EmailSender>();
-            services.AddSingleton<IQueryHelper, QueryHelper>();
+            services.AddScoped<IQueryHelper, QueryHelper>();
             services.AddSingleton<IPaymentHelper, PaymentHelper>();
+            services.AddScoped<ILocalDataHelper, LocalDataHelper>();
 
             services.AddControllersWithViews();
             services.AddRazorPages();

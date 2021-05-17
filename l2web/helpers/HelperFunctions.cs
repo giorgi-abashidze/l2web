@@ -71,6 +71,13 @@ namespace l2web.helpers
             }
         }
 
+        public static double GetDiffInMinutes(DateTime date1,DateTime date2)
+        {
+            TimeSpan ts = date2 - date1;
+
+            return ts.TotalMinutes;
+        }
+
     }
 
 }

@@ -7,6 +7,7 @@ namespace l2web.Models
 {
     public class Castle
     {
+
         public string CastleName { get; set; }
         public string Owner { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using l2web.helpers;
+﻿using l2web.Data;
+using l2web.Data.DataModels;
 using l2web.helpers.contracts;
 using l2web.Models;
 using l2web.Views.UserAccount;
@@ -6,9 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using PayPalCheckoutSdk.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace l2web.Controllers
 {
-  
+
     [Authorize]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class UserAccountController : Controller
@@ -25,12 +26,23 @@ namespace l2web.Controllers
         private readonly IQueryHelper _queryHelper;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPaymentHelper _paymentHelper;
-        public UserAccountController(ILogger<UserAccountController> logger, IQueryHelper queryHelper, UserManager<ApplicationUser> userManager, IPaymentHelper paymentHelper)
+        private readonly ILocalDataHelper _localDataHelper;
+        private readonly ApplicationDbContext _db;
+
+        public UserAccountController(
+            ILogger<UserAccountController> logger, 
+            IQueryHelper queryHelper, 
+            UserManager<ApplicationUser> userManager, 
+            IPaymentHelper paymentHelper, 
+            ILocalDataHelper localDataHelper,
+            ApplicationDbContext db)
         {
             _logger = logger;
             _queryHelper = queryHelper;
             _userManager = userManager;
             _paymentHelper = paymentHelper;
+            _localDataHelper = localDataHelper;
+            _db = db;
         }
         // GET: AccountController
         public async Task<ActionResult> Index()
@@ -38,13 +50,44 @@ namespace l2web.Controllers
             
             var user = await _userManager.GetUserAsync(HttpContext.User);
 
+            var userWithAccount = await _db.Users.Include(u => u.Account).ThenInclude(a => a.Characters).Where(u => u.Id.Equals(user.Id)).FirstOrDefaultAsync();
+
             IndexModel model = new IndexModel();
             model.PaymentHelper = _paymentHelper;
-            model.Characters = await _queryHelper.GetCharactersInfo(user.Login);
-            model.OnlinePlayers = await _queryHelper.GetOnlineCount();
-            model.EpicOwners = await _queryHelper.GetEpicOwners();
-            model.TopClans = await _queryHelper.GetTopClans();
-            model.CastleInfo = await _queryHelper.GetCastleInfo();
+
+            if (_localDataHelper.CheckCharactersUpdateLimit(user)) {
+                await _queryHelper.GetCharactersInfo(userWithAccount);
+                user.LastAccountUpdateTime = DateTime.Now;
+                _db.Attach(user);
+                _db.Entry(user).Property(p => p.LastAccountUpdateTime).IsModified = true;
+                await _db.SaveChangesAsync();
+            }
+            if (await _localDataHelper.CheckOnlineUpdateLimit())
+            {
+                await _queryHelper.GetOnlineCount();
+                var updates = await _db.DataUpdates.FirstAsync();
+                _db.Attach(updates);
+                updates.LastOnlineUpdate = DateTime.Now;
+                _db.Entry(updates).Property(p => p.LastOnlineUpdate).IsModified = true;
+                await _db.SaveChangesAsync();
+            }
+            if (await _localDataHelper.CheckStatsUpdateLimit())
+            {
+                await _queryHelper.GetEpicOwners();
+                await _queryHelper.GetTopClans();
+                await _queryHelper.GetCastleInfo();
+
+                var updates = await _db.DataUpdates.FirstAsync();
+                _db.Attach(updates);
+                updates.LastDataUpdate = DateTime.Now;
+                _db.Entry(updates).Property(p => p.LastDataUpdate).IsModified = true;
+                await _db.SaveChangesAsync();
+            }
+            model.Characters = _localDataHelper.GetAccountInfo(userWithAccount);
+            model.OnlinePlayers = await _localDataHelper.GetLastOnline();
+            model.EpicOwners = _localDataHelper.GetEpicOwners();
+            model.TopClans = _localDataHelper.GetTopClans();
+            model.CastleInfo =  _localDataHelper.GetCastleInfo();
             return View(model);
         }
 
@@ -69,8 +112,18 @@ namespace l2web.Controllers
 
         public async Task<IActionResult> Services()
         {
+            if (await _localDataHelper.CheckOnlineUpdateLimit())
+            {
+                await _queryHelper.GetOnlineCount();
+                var updates = await _db.DataUpdates.FirstAsync();
+                _db.Attach(updates);
+                updates.LastOnlineUpdate = DateTime.Now;
+                _db.Entry(updates).Property(p => p.LastOnlineUpdate).IsModified = true;
+                await _db.SaveChangesAsync();
+            }
+
             var model = new UserServicesModel();
-            model.OnlinePlayers = await _queryHelper.GetOnlineCount();
+            model.OnlinePlayers = await _localDataHelper.GetLastOnline();
             return View("UserServices",model);
         }
 

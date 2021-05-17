@@ -18,6 +18,9 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Edi.Captcha;
+using l2web.Data.DataModels;
+using l2web.Data;
+using l2web.helpers.contracts;
 
 namespace l2web.Areas.Identity.Pages.Account
 {
@@ -31,6 +34,7 @@ namespace l2web.Areas.Identity.Pages.Account
         private readonly IQueryHelper _queryHelper;
         private readonly IConfiguration _config;
         private readonly ISessionBasedCaptcha _captcha;
+        private readonly ApplicationDbContext _db;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -39,7 +43,8 @@ namespace l2web.Areas.Identity.Pages.Account
             IEmailSender emailSender,
             IQueryHelper queryHelper,
             IConfiguration config,
-            ISessionBasedCaptcha captcha)
+            ISessionBasedCaptcha captcha,
+            ApplicationDbContext db)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -48,6 +53,7 @@ namespace l2web.Areas.Identity.Pages.Account
             _queryHelper = queryHelper;
             _config = config;
             _captcha = captcha;
+            _db = db;
         }
 
         public IActionResult GetCaptchaImage()
@@ -149,14 +155,23 @@ namespace l2web.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    
+
+                    var acc = new Data.DataModels.Account();
+                    acc.userId = user.Id;
+                    acc.User = user;
+                    _db.GameAccount.Add(acc);
+
+                    user.AccountId = acc.Id;
+
+                    await _db.SaveChangesAsync();
+
                     string ssn = HelperFunctions.GenerateSSN();
                     string key = String.Empty;
 
                     if (usemd5Password) { 
                         key = _config.GetSection("md5password").GetSection("Key").Value;
                     }
-                    
+
                     
 
                     try

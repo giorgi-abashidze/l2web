@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Edi.Captcha;
+using l2web.Data.DataModels;
 
 namespace l2web.Areas.Identity.Pages.Account
 {

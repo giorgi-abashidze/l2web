@@ -1,5 +1,8 @@
+using l2web.Data;
+using l2web.Data.DataModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,9 +14,35 @@ namespace l2web
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            InsertUpdateDataIfNotExists(host);
+
+            await host.RunAsync();
+        }
+
+        private static void InsertUpdateDataIfNotExists(IHost host)
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+                    if (context.DataUpdates.Count() == 0) {
+                        context.DataUpdates.Add(new DataUpdate());
+                        context.SaveChanges();
+                    }
+                    
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred inserting Update Data.");
+                }
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

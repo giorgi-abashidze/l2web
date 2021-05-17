@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using l2web.helpers;
+using l2web.Data.DataModels;
+using l2web.helpers.contracts;
 
 namespace l2web.Areas.Identity.Pages.Account
 {
