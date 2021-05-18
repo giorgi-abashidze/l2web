@@ -210,62 +210,30 @@ namespace l2web.helpers
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Connection.Open();
                 int online = (int)await command.ExecuteScalarAsync();
+
                 var OCache = new OnlineCache();
                 OCache.Online = online;
                 OCache.TDate = DateTime.Now;
 
                 var count = _db.OnlineCache.Count();
 
-                if (count == 0) {
-                    //if there is no data save first record with time xx:00
-                    //we dont need records like xx:14 or xx:47
-                    //we need data like 13:00, 14:00 and so on.
-                    var now = DateTime.Now;
-                    if (now.Minute < 30 && now.Minute != 0) {
-                        now = now.AddMinutes(-now.Minute);
-                    }
-                    else if(now.Minute > 30 && now.Minute != 0)
-                    {
-                        now = now.AddMinutes(60 - now.Minute);
-                    }
-
-                    OCache.TDate = now;
-                    _db.OnlineCache.Add(OCache);
-                    await _db.SaveChangesAsync();
-                    return true;
-                }
-
-                //last record is always current online
-                //we also save online data for every one hour
-                //for accuracy, in the chart dont use last record
-
-                var last = await _db.OnlineCache.OrderByDescending(o => o.TDate).FirstAsync();
-                if (HelperFunctions.GetDiffInMinutes(last.TDate, DateTime.Now) >= 60)
+                if (count == 0)
                 {
-                    //just keep 100 records its about 4 day
-                    if (count >= 100) {
-                        var first = await _db.OnlineCache.OrderBy(o => o.TDate).FirstAsync();
-                        _db.Remove(first);
-                    }
-
-                    _db.Attach(last);
-                    last.Online = OCache.Online;
-                    last.TDate = last.TDate.AddHours(1);
-                    _db.Entry(last).Property(e => e.Online).IsModified = true;
-                    _db.Entry(last).Property(e => e.TDate).IsModified = true;
-
                     _db.OnlineCache.Add(OCache);
                     await _db.SaveChangesAsync();
                     return true;
                 }
                 else {
+                    var last = await _db.OnlineCache.OrderByDescending(o => o.TDate).FirstAsync();
                     _db.Attach(last);
                     last.Online = OCache.Online;
+                    last.TDate = DateTime.Now;
                     _db.Entry(last).Property(e => e.Online).IsModified = true;
+                    _db.Entry(last).Property(e => e.TDate).IsModified = true;
+
                     await _db.SaveChangesAsync();
                     return true;
                 }
-
 
             }
         }

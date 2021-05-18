@@ -54,7 +54,7 @@ namespace l2web.helpers
         }
 
         public async Task<int> GetLastOnline() {
-            var online = await _db.OnlineCache.OrderByDescending(i => i.TDate).FirstOrDefaultAsync();
+            var online = await _db.OnlineCache.FirstOrDefaultAsync();
             return online == null ? 0 : online.Online;
         }
 

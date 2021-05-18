@@ -28,12 +28,8 @@ namespace l2web.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<OnlineCache>()
-                .HasKey(c => new { c.Online, c.TDate });
-
             builder.Entity<EpicOwnersCache>()
                 .HasKey(c => new { c.CharName, c.ItemId });
-
 
             builder.Entity<ApplicationUser>()
                 .HasOne(a => a.Account)
