@@ -14,10 +14,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link href="~/css/all.css" rel="stylesheet">
+
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-dark navbar-expand-sm navbar-toggleable-sm bg-dark shadow-lg mb-3">
+
+    <header class="bg-transparent">
+        <nav class="navbar navbar-dark bg-transparent navbar-expand-sm navbar-toggleable-sm">
             <div class="container">
                 @if (SignInManager.IsSignedIn(User))
                 {
@@ -36,16 +38,16 @@
                     <partial name="_LoginPartial" />
                     @if (SignInManager.IsSignedIn(User))
                     {
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-light customSelected" id="account-home" asp-area="" asp-controller="UserAccount" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item ml-1">
-                        <a class="nav-link text-light customNotSelected" id="account-services" asp-area="" asp-controller="UserAccount" asp-action="Services">Services</a>
-                    </li>
-                    
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-light customSelected" id="account-home" asp-area="" asp-controller="UserAccount" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item ml-1">
+                                <a class="nav-link text-light customNotSelected" id="account-services" asp-area="" asp-controller="UserAccount" asp-action="Services">Services</a>
+                            </li>
 
-                </ul>
+
+                        </ul>
                     }
                     else
                     {
@@ -65,14 +67,32 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-    
+
+    @if (!SignInManager.IsSignedIn(User))
+    {
+        <div class="site-background-top" style="margin-top:-60px;">
+           
+        </div>
+
+        <div class="container bg-dark p-3 shadow-lg" style="z-index:100;max-width:900px !important;margin-top:-250px;margin-bottom:130px;min-height:500px;">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
+    else
+    {
+        <div class="container bg-dark">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
+
+
+
     <footer class="footer text-light shadow-lg">
-       
+
         <div class="container">
             <div class="row">
                 <div class="col">
@@ -86,9 +106,11 @@
         </div>
 
     </footer>
-   
+
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
+
 </body>
 </html>

@@ -1,11 +1,23 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
-
+body, button, input, select, textarea, h1, h2, h3, h4, h5, h6 {
+    font-family: Tahoma;
+}
 
 a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
+}
+
+
+.site-background-top {
+    background-image: url('../images/ggg.jpg');
+    height: 700px;
+    max-height:700px;
+    background-position:top;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .header-image {
@@ -92,7 +104,6 @@ input {
 
 body {
     /* Margin bottom by footer height */
-    margin-bottom: 60px;
     background: #343A40;
     color: #E7E7E7;
 }
