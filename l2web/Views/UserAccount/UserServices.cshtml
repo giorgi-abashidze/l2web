@@ -4,12 +4,15 @@
 <div class="container text-light">
     <div class="row">
         <div class="col mt-2 h5 text-light">
-            Online: <span class="h5 ml-1">@Model.OnlinePlayers</span>
+            <i class="fas fa-globe-americas h5 text-success"></i>
+            <span class="h5 ml-1">@Model.OnlinePlayers</span>
         </div>
-        <div class="col mt-2">
+        <div class="col mt-2 text-right">
             <i class="fas fa-coins h5 text-warning"></i>
             <span class="h5 text-light ml-1">0</span>
-            <div class="btn-group ml-2" style="margin-top:-6px;">
+        </div>
+        <div class="col mt-2 text-left">
+            <div class="btn-group" style="margin-top:-4px;">
                 <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Manage Balance
                 </button>
