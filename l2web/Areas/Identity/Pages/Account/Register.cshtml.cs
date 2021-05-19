@@ -66,9 +66,6 @@ namespace l2web.Areas.Identity.Pages.Account
             return s;
         }
 
-        //use md5password for l2auth
-        private bool usemd5Password = true;
-
         [BindProperty]
         public InputModel Input { get; set; }
 
@@ -166,28 +163,44 @@ namespace l2web.Areas.Identity.Pages.Account
                     await _db.SaveChangesAsync();
 
                     string ssn = HelperFunctions.GenerateSSN();
-                    string key = String.Empty;
+                    string key = _config.GetSection("md5password").GetSection("Key").Value;
 
-                    if (usemd5Password) { 
-                        key = _config.GetSection("md5password").GetSection("Key").Value;
-                    }
-
-                    
-
-                    try
+                    if (string.IsNullOrEmpty(key))
                     {
-                        //await _queryHelper.InsertSSN(ssn, Input.Prefix.ToLower() + Input.Login.ToLower(), Input.Email);
-                        await _queryHelper.InsertUserAccount(Input.Prefix.ToLower() + Input.Login.ToLower(), Input.Email);
-                        await _queryHelper.InsertUserInfo(Input.Prefix.ToLower() + Input.Login.ToLower(), ssn);
+                        try
+                        {
+                            //await _queryHelper.InsertSSN(ssn, Input.Prefix.ToLower() + Input.Login.ToLower(), Input.Email);
+                            await _queryHelper.InsertUserAccount(Input.Prefix.ToLower() + Input.Login.ToLower(), Input.Email);
+                            await _queryHelper.InsertUserInfo(Input.Prefix.ToLower() + Input.Login.ToLower(), ssn);
 
-                        //don't pass md5password: if you are not using md5 password in l2auth
-                        await _queryHelper.InsertUserAuth(Input.Prefix.ToLower() + Input.Login.ToLower(),  Input.Password, md5password: HelperFunctions.hCrypt(Input.Password, key));
+                            //don't pass md5password: if you are not using md5 password in l2auth
+                            await _queryHelper.InsertUserAuth(Input.Prefix.ToLower() + Input.Login.ToLower(), Input.Password);
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        }
+                        catch (SqlException e)
+                        {
+                            Console.WriteLine("Errooooor: " + e.Message);
+                        }
                     }
-                    catch (SqlException e) {
-                        Console.WriteLine("Errooooor: "+e.Message);
+                    else {
+                        try
+                        {
+                            //await _queryHelper.InsertSSN(ssn, Input.Prefix.ToLower() + Input.Login.ToLower(), Input.Email);
+                            await _queryHelper.InsertUserAccount(Input.Prefix.ToLower() + Input.Login.ToLower(), Input.Email);
+                            await _queryHelper.InsertUserInfo(Input.Prefix.ToLower() + Input.Login.ToLower(), ssn);
+
+                            //don't pass md5password: if you are not using md5 password in l2auth
+                            await _queryHelper.InsertUserAuth(Input.Prefix.ToLower() + Input.Login.ToLower(), Input.Password, md5password: HelperFunctions.hCrypt(Input.Password, key));
+
+                            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        }
+                        catch (SqlException e)
+                        {
+                            Console.WriteLine("Errooooor: " + e.Message);
+                        }
                     }
 
 

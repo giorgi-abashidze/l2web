@@ -21,13 +21,25 @@ namespace l2web.Areas.Identity.Pages.Account
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly ISessionBasedCaptcha _captcha;
 
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender, ISessionBasedCaptcha captcha)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _captcha = captcha;
 
+        }
+
+        public IActionResult GetCaptchaImage()
+        {
+            var s = _captcha.GenerateCaptchaImageFileStream(
+                HttpContext.Session,
+                100,
+                36
+                );
+            return s;
         }
 
 
@@ -40,11 +52,22 @@ namespace l2web.Areas.Identity.Pages.Account
             [EmailAddress]
             public string Email { get; set; }
 
+            [Required]
+            [StringLength(4)]
+            public string CaptchaCode { get; set; }
+
 
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+
+            if (!_captcha.Validate(Input.CaptchaCode, HttpContext.Session))
+            {
+                ModelState.AddModelError("Input.CaptchaCode", "Captcha code is not correct.");
+                return Page();
+            }
+
             if (ModelState.IsValid)
             {
 

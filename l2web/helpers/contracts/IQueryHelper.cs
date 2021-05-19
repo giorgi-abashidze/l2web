@@ -20,5 +20,6 @@ namespace l2web.helpers.contracts
         Task<bool> GetEpicOwners();
         Task<bool> GetTopClans();
         Task<bool> GetCastleInfo();
+        Task<bool> ResetPaassword(string account, string password, string md5password = null);
     }
 }

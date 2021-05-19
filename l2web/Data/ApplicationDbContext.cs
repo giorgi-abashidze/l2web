@@ -2,6 +2,7 @@
 using l2web.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,9 +20,12 @@ namespace l2web.Data
 
         public DbSet<OnlineCache> OnlineCache { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        private readonly IConfiguration _configuration;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
             : base(options)
         {
+            _configuration = configuration;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -40,6 +44,7 @@ namespace l2web.Data
             builder.Entity<ApplicationUser>()
            .Property(b => b.LastAccountUpdateTime)
            .HasDefaultValue(DateTime.Now.AddDays(-1));
+
 
             builder.Entity<Account>()
                 .HasMany(a => a.Characters)

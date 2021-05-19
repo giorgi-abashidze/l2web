@@ -19,7 +19,7 @@
 <body>
 
     <header class="bg-transparent">
-        <nav class="navbar navbar-dark bg-transparent navbar-expand-sm navbar-toggleable-sm">
+        <nav class="navbar navbar-dark bg-dark navbar-expand-sm navbar-toggleable-sm">
             <div class="container">
                 @if (SignInManager.IsSignedIn(User))
                 {
@@ -70,7 +70,7 @@
 
     @if (!SignInManager.IsSignedIn(User))
     {
-        <div class="site-background-top" style="margin-top:-60px;">
+        <div class="site-background-top" >
            
         </div>
 

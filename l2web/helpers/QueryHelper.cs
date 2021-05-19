@@ -30,10 +30,11 @@ namespace l2web.helpers
             _userManager = userManager;
             connectionStr = Configuration.GetConnectionString("L2Connection");
             worldConnectionStr = Configuration.GetConnectionString("L2WorldConnection");
-            
+
         }
 
-        public async Task<bool> CheckAccount(string login) {
+        public async Task<bool> CheckAccount(string login)
+        {
             string query = $"SELECT account FROM user_account WHERE account = '{login}'";
 
             using (SqlConnection connection = new SqlConnection(
@@ -60,9 +61,9 @@ namespace l2web.helpers
         }
 
 
-        public async Task<bool> InsertSSN(string ssn,string name,string email,string phone = null)
+        public async Task<bool> InsertSSN(string ssn, string name, string email, string phone = null)
         {
-            string query = "INSERT INTO [ssn](ssn,name,email,job,phone,zip,addr_main,addr_etc,account_num)"+
+            string query = "INSERT INTO [ssn](ssn,name,email,job,phone,zip,addr_main,addr_etc,account_num)" +
                             $"VALUES('{ssn}', '{name}', '{email}', 0, 'telphone', '123456', '', '', 1)";
 
             using (SqlConnection connection = new SqlConnection(
@@ -76,7 +77,7 @@ namespace l2web.helpers
 
         public async Task<bool> InsertUserAccount(string account, string email)
         {
-            string query = "INSERT INTO user_account (account,pay_stat,email)"+
+            string query = "INSERT INTO user_account (account,pay_stat,email)" +
                             $"VALUES('{account}', 0, '{email}')";
 
             using (SqlConnection connection = new SqlConnection(
@@ -88,7 +89,7 @@ namespace l2web.helpers
             }
         }
 
-        public async Task<bool> InsertUserAuth(string account, string password,string md5password = null, string quiz1 = null,string quiz2 = null,string answer1 = null,string answer2 = null)
+        public async Task<bool> InsertUserAuth(string account, string password, string md5password = null, string quiz1 = null, string quiz2 = null, string answer1 = null, string answer2 = null)
         {
             string query;
 
@@ -98,14 +99,15 @@ namespace l2web.helpers
             {
                 HelperFunctions.Randomize(passwordBytes);
 
-                 query = "INSERT INTO user_auth (account,password,md5password,quiz1,quiz2,answer1,answer2)" +
-                           $"VALUES('{account}',@BIN,'{md5password.ToLower()}', '{quiz1}', '{quiz2}',@BIN2,@BIN3)";
+                query = "INSERT INTO user_auth (account,password,md5password,quiz1,quiz2,answer1,answer2)" +
+                          $"VALUES('{account}',@BIN,'{md5password.ToLower()}', '{quiz1}', '{quiz2}',@BIN2,@BIN3)";
             }
-            else {
-                 query = "INSERT INTO user_auth (account,password,quiz1,quiz2,answer1,answer2)" +
-                               $"VALUES('{account}',@BIN,'{quiz1}', '{quiz2}',@BIN2,@BIN3)";
+            else
+            {
+                query = "INSERT INTO user_auth (account,password,quiz1,quiz2,answer1,answer2)" +
+                              $"VALUES('{account}',@BIN,'{quiz1}', '{quiz2}',@BIN2,@BIN3)";
             }
-            
+
 
             using (SqlConnection connection = new SqlConnection(
                connectionStr))
@@ -158,7 +160,7 @@ namespace l2web.helpers
                 command.Connection.Open();
                 using (IDataReader reader = await command.ExecuteReaderAsync())
                 {
-                    while(reader.Read())
+                    while (reader.Read())
                     {
                         var ch = new CharacterCache();
 
@@ -182,7 +184,7 @@ namespace l2web.helpers
                             tmpChar.RaceIndex = ch.RaceIndex;
                             tmpChar.OcupationIndex = ch.OcupationIndex;
                             tmpChar.Lvl = ch.Lvl;
-                            
+
                             _db.Entry(tmpChar).Property(p => p.RaceIndex).IsModified = true;
                             _db.Entry(tmpChar).Property(p => p.OcupationIndex).IsModified = true;
                             _db.Entry(tmpChar).Property(p => p.Lvl).IsModified = true;
@@ -223,7 +225,8 @@ namespace l2web.helpers
                     await _db.SaveChangesAsync();
                     return true;
                 }
-                else {
+                else
+                {
                     var last = await _db.OnlineCache.OrderByDescending(o => o.TDate).FirstAsync();
                     _db.Attach(last);
                     last.Online = OCache.Online;
@@ -242,20 +245,20 @@ namespace l2web.helpers
         {
 
             string query = "SELECT p.char_name,p.item_type, SUM(p.amount) as amount " +
-                "FROM( "+
-                "SELECT user_data.char_name,user_item.item_type,user_item.amount "+
-                "FROM user_item "+
-                "INNER JOIN user_data "+
-                "ON user_item.char_id = user_data.char_id "+
-                "AND user_item.item_type "+
-                "IN(6657, 6658, 6659, 6660, 8191, 90992) "+
-                "UNION ALL SELECT user_data.char_name,user_warehouse.item_type,user_warehouse.amount "+
-                "FROM user_warehouse "+
-                "INNER JOIN user_data "+
-                "ON user_warehouse.char_id = user_data.char_id "+
-                "AND user_warehouse.item_type "+
-                "IN(6657, 6658, 6659, 6660, 8191, 90992) "+
-                ")p "+
+                "FROM( " +
+                "SELECT user_data.char_name,user_item.item_type,user_item.amount " +
+                "FROM user_item " +
+                "INNER JOIN user_data " +
+                "ON user_item.char_id = user_data.char_id " +
+                "AND user_item.item_type " +
+                "IN(6657, 6658, 6659, 6660, 8191, 90992) " +
+                "UNION ALL SELECT user_data.char_name,user_warehouse.item_type,user_warehouse.amount " +
+                "FROM user_warehouse " +
+                "INNER JOIN user_data " +
+                "ON user_warehouse.char_id = user_data.char_id " +
+                "AND user_warehouse.item_type " +
+                "IN(6657, 6658, 6659, 6660, 8191, 90992) " +
+                ")p " +
                 "GROUP BY p.char_name, p.item_type";
 
             using (SqlConnection connection = new SqlConnection(
@@ -373,7 +376,34 @@ namespace l2web.helpers
             return true;
         }
 
+        public async Task<bool> ResetPaassword(string account,string password,string md5password = null)
+        {
+            string query;
 
+            byte[] passwordBytes = HelperFunctions.StrToByteArray(password);
+
+            if (!string.IsNullOrEmpty(md5password))
+            {
+                HelperFunctions.Randomize(passwordBytes);
+
+                query = "UPDATE user_auth SET password = @BIN, md5password = " + password.ToLower() + "WHERE account = " + account + ";";
+ 
+            }
+            else
+            {
+                query = "UPDATE user_auth SET password = @BIN WHERE account = " + account + ";";
+            }
+
+            using (SqlConnection connection = new SqlConnection(
+               connectionStr))
+            {
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.Add("@BIN", SqlDbType.Binary, passwordBytes.Length).Value = passwordBytes;
+                command.Connection.Open();
+                return await command.ExecuteNonQueryAsync() == 1;
+            }
+
+        }
     }
 
     

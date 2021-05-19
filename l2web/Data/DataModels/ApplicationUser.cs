@@ -11,5 +11,6 @@ namespace l2web.Data.DataModels
         public DateTime LastAccountUpdateTime { get; set; }
         public string AccountId { get; set; }
         public Account Account {get;set;}
+
     }
 }
