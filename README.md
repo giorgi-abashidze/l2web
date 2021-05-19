@@ -13,7 +13,9 @@ see appsettings.json to configure project
 
 # Any contribution will be appriciated
 
-![plot](registration.jpg)
+![plot](register.jpg)
+![plot](register2.jpg)
+![plot](login.jpg)
 ![plot](dashboard.jpg)
 ![plot](services.jpg)
 
