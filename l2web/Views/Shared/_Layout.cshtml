@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <link href="~/css/all.css" rel="stylesheet">
 
+
 </head>
 <body>
 
@@ -23,11 +24,11 @@
             <div class="container">
                 @if (SignInManager.IsSignedIn(User))
                 {
-                    <a class="navbar-brand" asp-area="" asp-controller="UserAccount" asp-action="Index">l2web</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="UserAccount" asp-action="Index"><img src="~/images/icon-light.png" width="30" /></a>
                 }
                 else
                 {
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">l2web</a>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/icon-light.png" width="30" /></a>
                 }
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -70,10 +71,57 @@
 
     @if (!SignInManager.IsSignedIn(User))
     {
-        <div class="site-background-top" >
-           
-        </div>
+<div class="site-background-top">
 
+
+
+    <div id="header-image-content" class="container" style="margin:auto;">
+
+        <div class="row">
+            <div class="col">
+                <div class="row justify-content-start">
+
+
+                    <small style="height:35px;" class="p-2 opacity rounded-bottom">  Online: 1480 </small>
+
+
+                </div>
+            </div>
+
+            <div class="col-8">
+                <div class="row justify-content-end">
+                    <div style="height:35px;max-width:220px;" class="opacity rounded-bottom">
+                        <div class="row justify-content-end pt-2 ml-2 mr-2">
+                            <div class="rounded-circle server-status-off d-inline-block border border-dark" style="width:13px;height:13px;margin-top:3px;">
+
+                            </div>
+                            <small class="ml-1 align-middle  d-inline-block mr-4">Auth Server</small>
+
+
+                            <div class="rounded-circle server-status-off d-inline-block border border-dark" style="width:13px;height:13px;margin-top:3px;">
+
+                            </div>
+                            <small class="ml-1 align-middle  d-inline-block">Game Server</small>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+        <div class="row justify-content-center mt-5" style="margin:auto;">
+            <div>
+                <p id="server-name-big">Server Name</p>
+                <button class="btn btn-lg start-btn mt-3 d-block" style="margin:auto;">Start Game</button>
+            </div>
+            
+        </div>
+       
+    </div>
+</div>
+        
         <div id="mainContent" class="container bg-dark p-3 shadow-lg box-shadow" style="z-index:100;max-width:900px !important;margin-bottom:130px;min-height:500px;">
             <main role="main" class="pb-3">
                 @RenderBody()
@@ -107,7 +155,7 @@
 
     </footer>
 
-
+ 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)

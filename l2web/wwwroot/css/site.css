@@ -1,28 +1,86 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
+@font-face {
+    font-family: 'Almendra';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url("../webfonts/AlmendraSC-Regular.ttf")
+}
+
 body, button, input, select, textarea, h1, h2, h3, h4, h5, h6 {
     font-family: Tahoma;
 }
 
+.server-status-on {
+    background: rgb(0,136,35);
+    background: linear-gradient(0deg, rgba(0,136,35,1) 0%, rgba(68,222,83,1) 35%, rgba(3,196,43,1) 100%);
+}
+
+.server-status-off {
+    background: rgb(136,0,0);
+    background: linear-gradient(0deg, rgba(136,0,0,1) 0%, rgba(222,68,68,1) 35%, rgba(196,3,3,1) 100%);
+}
+
+
 a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
 }
 
 #mainContent {
     margin-top:-250px;
 }
 
+#header-image-content {
+    max-width:900px;
+}
+
+.start-btn {
+    width: 200px;
+    background: rgb(45,125,50);
+    background: linear-gradient(0deg, rgba(45,125,50,1) 0%, rgba(54,162,64,1) 35%, rgba(27,214,67,1) 100%);
+    color: #fff;
+    -webkit-box-shadow: 1px 13px 42px 6px #14530D;
+    box-shadow: 1px 13px 42px 6px #14530D;
+}
+
+    .start-btn:hover {
+        background: rgb(45,125,50);
+        background: linear-gradient(0deg, rgba(45,125,50,1) 0%, rgba(59,205,73,1) 35%, rgba(27,214,67,1) 100%);
+        color: #fff;
+        -webkit-box-shadow: 1px 13px 42px 6px #14530D;
+        box-shadow: 1px 13px 42px 6px #14530D;
+    }
+
+    .start-btn:focus {
+        background: rgb(45,125,50);
+        background: linear-gradient(0deg, rgba(45,125,50,1) 0%, rgba(54,162,64,1) 35%, rgba(27,214,67,1) 100%);
+        color: #fff;
+        -webkit-box-shadow: 1px 13px 42px 6px #14530D;
+        box-shadow: 1px 13px 42px 6px #14530D;
+    }
+
+#server-name-big {
+    font-size:4em;
+    font-family:Almendra;
+    text-shadow: 1px 3px 8px #000000;
+}
+
+.opacity {
+    background-color: rgba(255,255,255,0.3);
+}
 
 .site-background-top {
     background-image: url('../images/ggg.jpg');
     height: 700px;
-    max-height:700px;
-    min-height:700px;
-    background-position:top;
+    max-height: 700px;
+    min-height: 700px;
+    background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
+
 }
 
 .header-image {
@@ -100,6 +158,12 @@ html {
 @media (max-width: 900px) {
     #mainContent {
        width:90% !important;
+    }
+    #header-image-content {
+        width: 90% !important;
+    }
+    #server-name-big {
+        font-size: 3em;
     }
 }
 
