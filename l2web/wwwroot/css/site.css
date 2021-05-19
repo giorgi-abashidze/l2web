@@ -15,6 +15,7 @@ a.navbar-brand {
     background-image: url('../images/ggg.jpg');
     height: 700px;
     max-height:700px;
+    min-height:700px;
     background-position:top;
     background-repeat: no-repeat;
     background-size: cover;
