@@ -80,6 +80,11 @@ html {
   }
 }
 
+#mainContent {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 @media (max-width: 1090px) {
     #mainContent {
         margin-top: -350px;
@@ -89,6 +94,12 @@ html {
 @media (min-width: 1400px) {
     #mainContent {
         margin-top: -200px;
+    }
+}
+
+@media (max-width: 900px) {
+    #mainContent {
+       width:90% !important;
     }
 }
 
