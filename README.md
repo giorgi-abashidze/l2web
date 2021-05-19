@@ -9,6 +9,7 @@ see appsettings.json to configure project
 
 - [x] Save Dashboard data locally and update after x minutes to prevent l2word from receiving too many requests
 - [ ] Implement Payment With Visa / Mastercard
+- [ ] Admin panel
 
 
 # Any contribution will be appriciated
