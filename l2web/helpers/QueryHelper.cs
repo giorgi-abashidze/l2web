@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -243,6 +244,7 @@ namespace l2web.helpers
 
         public async Task<bool> GetEpicOwners()
         {
+            List<EpicOwnersCache> newList = new List<EpicOwnersCache>();
 
             string query = "SELECT p.char_name,p.item_type, SUM(p.amount) as amount " +
                 "FROM( " +
@@ -275,6 +277,7 @@ namespace l2web.helpers
                         owner.ItemId = (int)reader["item_type"];
                         owner.Amount = (Int64)reader["amount"];
 
+                        newList.Add(owner);
 
                         var tmpOwner = _db.EpicOwnersCache.Where(e => e.CharName.Equals(owner.CharName) && e.ItemId == owner.ItemId).FirstOrDefault();
 
@@ -298,13 +301,18 @@ namespace l2web.helpers
 
             await _db.SaveChangesAsync();
 
+            var trashList = _db.EpicOwnersCache.Where(f => !newList.Any(i => i.CharName.Equals(f.CharName) && i.ItemId == f.ItemId));
+            _db.EpicOwnersCache.RemoveRange(trashList);
+
+            await _db.SaveChangesAsync();
+
             return true;
         }
 
         public async Task<bool> GetTopClans()
         {
             //clear Top 10 Clans Table and Insert new data instead of update
-            //Its only 10 records so it wont be big operation I think..
+            //Its only 10 records so it wont be a big operation I think..
             await _db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ClanCache]");
 
             string query = "SELECT TOP 10 Pledge.name as clan_name "

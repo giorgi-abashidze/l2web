@@ -10,6 +10,10 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+#mainContent {
+    margin-top:-250px;
+}
+
 
 .site-background-top {
     background-image: url('../images/ggg.jpg');
@@ -74,6 +78,18 @@ html {
   html {
     font-size: 16px;
   }
+}
+
+@media (max-width: 1090px) {
+    #mainContent {
+        margin-top: -350px;
+    }
+}
+
+@media (min-width: 1400px) {
+    #mainContent {
+        margin-top: -200px;
+    }
 }
 
 .border-top {
