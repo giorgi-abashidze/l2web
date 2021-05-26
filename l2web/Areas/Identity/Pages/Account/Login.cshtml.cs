@@ -61,8 +61,10 @@ namespace l2web.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnGetAsync(string returnUrl = null)
         {
-            if (User.Identity.IsAuthenticated)
-               return RedirectToAction("Index", "UserAccount");
+            if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                return RedirectToAction("Index", "Admin");
+            else if(User.Identity.IsAuthenticated && !User.IsInRole("admin"))
+                return RedirectToAction("Index", "UserAccount");
 
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
@@ -87,13 +89,22 @@ namespace l2web.Areas.Identity.Pages.Account
         
             if (ModelState.IsValid)
             {
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    if (await _userManager.IsInRoleAsync(user, "admin"))
+                    {
+                        return RedirectToAction("Index", "Admin");
+                    }
+                    else{
+                        return LocalRedirect(returnUrl);
+                    }
+                   
                 }
                 if (result.IsNotAllowed)
                 {

@@ -19,11 +19,15 @@
 </head>
 <body>
 
-    <header class="bg-transparent">
-        <nav class="navbar navbar-dark bg-dark navbar-expand-sm navbar-toggleable-sm">
+    <header class="bg-dark shadow-lg">
+        <nav class="navbar navbar-dark navbar-expand-sm navbar-toggleable-sm">
             <div class="container">
-                @if (SignInManager.IsSignedIn(User))
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("admin"))
                 {
+                    <a class="navbar-brand" asp-area="" asp-controller="Admin" asp-action="Index"><img src="~/images/icon-light.png" width="30" /></a>
+                }
+                else if (SignInManager.IsSignedIn(User) && !User.IsInRole("admin")) { 
+
                     <a class="navbar-brand" asp-area="" asp-controller="UserAccount" asp-action="Index"><img src="~/images/icon-light.png" width="30" /></a>
                 }
                 else
@@ -37,7 +41,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
-                    @if (SignInManager.IsSignedIn(User))
+                    @if (SignInManager.IsSignedIn(User) && !User.IsInRole("admin"))
                     {
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
@@ -49,6 +53,10 @@
 
 
                         </ul>
+                    }
+                    else if (SignInManager.IsSignedIn(User) && User.IsInRole("admin")) { 
+
+                       
                     }
                     else
                     {
@@ -122,7 +130,7 @@
     </div>
 </div>
         
-        <div id="mainContent" class="container bg-dark p-3 shadow-lg box-shadow" style="z-index:100;max-width:900px !important;margin-bottom:130px;min-height:500px;">
+        <div id="mainContent" class="container bg-dark p-3 shadow-lg" style="z-index:100;max-width:900px !important;margin-bottom:130px;min-height:500px;">
             <main role="main" class="pb-3">
                 @RenderBody()
             </main>
@@ -130,8 +138,8 @@
     }
     else
     {
-        <div class="container bg-dark">
-            <main role="main" class="pb-3">
+        <div class="container bg-dark mt-4 mb-5">
+            <main role="main" class="pb-4 pt-3">
                 @RenderBody()
             </main>
         </div>

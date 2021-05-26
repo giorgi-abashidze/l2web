@@ -30,7 +30,7 @@ a.navbar-brand {
 }
 
 #mainContent {
-    margin-top:-250px;
+    margin-top:-170px;
 }
 
 #header-image-content {
@@ -143,67 +143,78 @@ html {
     margin-right: auto;
 }
 
-@media (max-width: 1090px) {
+
+
+@media (min-width: 1400px) {
     #mainContent {
-        margin-top: -350px;
+        margin-top: -100px;
     }
 }
 
-@media (min-width: 1400px) {
+@media (max-width: 1090px) {
     #mainContent {
         margin-top: -200px;
     }
 }
 
-@media (max-width: 900px) {
-    #mainContent {
-       width:90% !important;
+    @media (max-width: 900px) {
+        #mainContent {
+            margin-top: -250px;
+        }
+
+        #mainContent {
+            width: 90% !important;
+        }
+
+        #header-image-content {
+            width: 90% !important;
+        }
+
+        #server-name-big {
+            font-size: 3em;
+        }
     }
-    #header-image-content {
-        width: 90% !important;
+
+    .border-top {
+        border-top: 1px solid #e5e5e5;
     }
-    #server-name-big {
-        font-size: 3em;
+
+    .border-bottom {
+        border-bottom: 1px solid #e5e5e5;
     }
-}
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
+    .box-shadow {
+        box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+    }
 
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
+    button.accept-policy {
+        font-size: 1rem;
+        line-height: inherit;
+    }
 
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
-/* Sticky footer styles
+    /* Sticky footer styles
 -------------------------------------------------- */
-html {
-  position: relative;
-  min-height: 100%;
-}
-input {
-    background-color: #6C757D !important;
-    color: #E7E7E7 !important;
-}
+    html {
+        position: relative;
+        min-height: 100%;
+    }
 
-body {
-    /* Margin bottom by footer height */
-    background: #343A40;
-    color: #E7E7E7;
-}
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px; /* Vertically center the text there */
-    background: #343A40;
-}
+    input {
+        background-color: #6C757D !important;
+        color: #E7E7E7 !important;
+    }
+
+    body {
+        /* Margin bottom by footer height */
+        background: #343A40;
+        color: #E7E7E7;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        white-space: nowrap;
+        line-height: 60px; /* Vertically center the text there */
+        background: #343A40;
+    }

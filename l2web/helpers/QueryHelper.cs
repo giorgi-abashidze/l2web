@@ -301,8 +301,13 @@ namespace l2web.helpers
 
             await _db.SaveChangesAsync();
 
-            var trashList = _db.EpicOwnersCache.Where(f => !newList.Any(i => i.CharName.Equals(f.CharName) && i.ItemId == f.ItemId));
-            _db.EpicOwnersCache.RemoveRange(trashList);
+           
+            var trashList = _db.EpicOwnersCache.ToListAsync().Result.Except(newList, new EpicOwnersComparer()).ToList();
+
+            if (trashList.Count() > 0) {
+                _db.EpicOwnersCache.RemoveRange(trashList);
+            }
+            
 
             await _db.SaveChangesAsync();
 

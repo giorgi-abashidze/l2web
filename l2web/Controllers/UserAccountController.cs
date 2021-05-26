@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace l2web.Controllers
 {
 
-    [Authorize]
+    [Authorize(Policy = "RequireUserRole")]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class UserAccountController : Controller
     {

@@ -32,8 +32,19 @@ namespace l2web
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddAuthorization(options => {
+                options.AddPolicy("RequireAdministratorRole",
+                policy => policy.RequireRole("admin"));
+
+                options.AddPolicy("RequireUserRole",
+                policy => policy.RequireRole("user"));
+            });
 
             services.Configure<IdentityOptions>(options =>
             {

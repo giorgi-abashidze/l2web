@@ -1,6 +1,7 @@
 using l2web.Data;
 using l2web.Data.DataModels;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,12 +19,12 @@ namespace l2web
         {
             var host = CreateHostBuilder(args).Build();
 
-            InsertUpdateDataIfNotExists(host);
+            await InsertUpdateDataIfNotExists(host);
 
             await host.RunAsync();
         }
 
-        private static void InsertUpdateDataIfNotExists(IHost host)
+        private static async Task InsertUpdateDataIfNotExists(IHost host)
         {
             using (var scope = host.Services.CreateScope())
             {
@@ -33,14 +34,65 @@ namespace l2web
                     var context = services.GetRequiredService<ApplicationDbContext>();
                     if (context.DataUpdates.Count() == 0) {
                         context.DataUpdates.Add(new DataUpdate());
-                        context.SaveChanges();
+                        await context.SaveChangesAsync();
                     }
-                    
+
+                    var RoleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var UserManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    var Configuration = services.GetRequiredService<IConfiguration>();
+
+
+                    string[] roleNames = { "admin", "user" };
+
+
+                    foreach (var roleName in roleNames)
+                    {
+                        var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                        if (!roleExist)
+                        {
+                            await RoleManager.CreateAsync(new IdentityRole(roleName));
+                        }
+                    }
+
+                    string email = Configuration.GetSection("web_admin").GetValue<string>("email");
+
+                    //Here you could create a super user who will maintain the web app
+                    var poweruser = new ApplicationUser
+                    {
+                        UserName = email,
+                        Email = email,
+                        Login = "webadmin",
+                        EmailConfirmed = true
+                        
+                    };
+
+                    var _user = await UserManager.FindByEmailAsync(email);
+
+                    if (_user == null)
+                    {
+                        string userPWD = Configuration.GetSection("web_admin").GetValue<string>("password");
+                        var createPowerUser = await UserManager.CreateAsync(poweruser, userPWD);
+                        if (createPowerUser.Succeeded)
+                        {
+                            var acc = new Account();
+                            acc.userId = poweruser.Id;
+                            acc.User = poweruser;
+                            context.GameAccount.Add(acc);
+
+                            poweruser.AccountId = acc.Id;
+
+                            await context.SaveChangesAsync();
+
+                            await UserManager.AddToRoleAsync(poweruser, "admin");
+
+                        }
+                    }
+
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred inserting Update Data.");
+                    logger.LogError(ex, "An error occurred");
                 }
             }
         }
