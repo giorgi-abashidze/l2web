@@ -8,9 +8,92 @@ for details on configuring this project to bundle and minify static web assets. 
     src: url("../webfonts/AlmendraSC-Regular.ttf")
 }
 
+:root {
+    /* Not my favorite that line-height has to be united, but needed */
+    --lh: 1rem;
+    --max-lines: 3;
+}
+
 body, button, input, select, textarea, h1, h2, h3, h4, h5, h6 {
     font-family: Tahoma;
 }
+
+.news-item {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-width: 200px;
+    height: 150px;
+}
+
+.news-item:hover {
+        cursor: pointer;
+ }
+
+
+.news-item-title {
+    display:block;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 1em;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.news-item-date {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display: block;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 0.7em;
+    color: rgba(255, 255, 255, 0.4);
+    overflow: hidden;
+}
+
+.news-item-text-wrapper {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 1em;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+
+
+
+.news-item-text {
+    display: block;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 5px;
+    font-size: 0.85em;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-line;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    line-height: var(--lh);
+    max-height: calc(var(--lh) * var(--max-lines));
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+
+
 
 .server-status-on {
     background: rgb(0,136,35);
@@ -30,7 +113,7 @@ a.navbar-brand {
 }
 
 #mainContent {
-    margin-top:-170px;
+    margin-top:-80px;
 }
 
 #header-image-content {
@@ -68,19 +151,27 @@ a.navbar-brand {
     text-shadow: 1px 3px 8px #000000;
 }
 
+.image-blur {
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+}
+
+.text-shadow {
+    text-shadow: 1px 2px 3px #000000;
+}
+
 .opacity {
     background-color: rgba(255,255,255,0.3);
 }
 
 .site-background-top {
     background-image: url('../images/ggg.jpg');
-    height: 700px;
-    max-height: 700px;
-    min-height: 700px;
+    height: 600px;
+    max-height: 600px;
+    min-height: 600px;
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
-
 }
 
 .header-image {

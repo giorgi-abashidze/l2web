@@ -17,8 +17,8 @@ namespace l2web.Data
         public DbSet<CharacterCache> CharacterCache { get; set; }
         public DbSet<ClanCache> ClanCache { get; set; }
         public DbSet<EpicOwnersCache> EpicOwnersCache { get; set; }
-
         public DbSet<OnlineCache> OnlineCache { get; set; }
+        public DbSet<NewsModel> News { get; set; }
 
         private readonly IConfiguration _configuration;
 
@@ -31,6 +31,11 @@ namespace l2web.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<NewsModel>()
+           .Property(b => b.CreateDate)
+           .HasDefaultValue(DateTime.Now);
+
 
             builder.Entity<EpicOwnersCache>()
                 .HasKey(c => new { c.CharName, c.ItemId });
